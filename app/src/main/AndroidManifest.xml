@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Internet access, so the screenshot + question can be sent to your AI API -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Needed to draw the floating "Ask AI" bubble over other apps -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!-- Needed to run the capture session as a visible foreground service -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+
+    <!-- Android 13+ requires this to show the "capture running" notification -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@android:drawable/ic_menu_camera"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+            This service only exists WHILE the user has explicitly granted the
+            screen-capture permission for this session. Android itself forces
+            a persistent, undismissable notification the whole time it runs,
+            so capture is never silent or hidden.
+        -->
+        <service
+            android:name=".CaptureService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection" />
+
+        <!-- Draws the small floating "Ask AI" button the user taps on demand -->
+        <service
+            android:name=".OverlayBubbleService"
+            android:exported="false" />
+
+    </application>
+</manifest>
